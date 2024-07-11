@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Text Extractor and Translator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 50px;
+        }
+        .container {
+            max-width: 600px;
+        }
+        .result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Image Text Extractor and Translator</h1>
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="file">Upload Image</label>
+                <input type="file" class="form-control-file" id="file" name="file" required>
+            </div>
+            <div class="form-group">
+                <label for="image_type">Image Type</label>
+                <select class="form-control" id="image_type" name="image_type">
+                    <option value="document">Document</option>
+                    <option value="screenshot">Screenshot</option>
+                    <option value="pic">Picture</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="src_lang">Source Language</label>
+                <select class="form-control" id="src_lang" name="src_lang">
+                    <option value="eng">English</option>
+                    <option value="kor">Korean</option>
+                    <option value="hin">Hindi</option>
+                    <option value="tel">Telugu</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload and Process</button>
+        </form>
+        <div class="result mt-4">
+            <h3>Results:</h3>
+            <p><strong>Extracted Text:</strong></p>
+            <pre id="extractedText"></pre>
+            <p><strong>Translated Text (English):</strong></p>
+            <pre id="translatedText"></pre>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#uploadForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    type: 'POST',
+                    url: '/upload',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.error) {
+                            alert(response.error);
+                        } else {
+                            $('#extractedText').text(response.extracted_text);
+                            $('#translatedText').text(response.translated_text);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while processing the image.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
